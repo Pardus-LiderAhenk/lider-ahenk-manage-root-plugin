@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>tr.org.liderahenk</groupId>
 		<artifactId>manage-root</artifactId>
-		<version>1.1</version>
+		<version>1.0.0</version>
 	</parent>
 
 	<artifactId>lider-manage-root-db</artifactId>
@@ -43,7 +43,7 @@
 						<_removeheaders>Import-Service,Export-Service</_removeheaders>
 						<Fragment-Host>lider-persistence-mariadb;bundle-version="[1.0.0,2)"</Fragment-Host>
 						<Bundle-SymbolicName>lider-manage-root-db</Bundle-SymbolicName>
-						<Bundle-Version>1.1</Bundle-Version>
+						<Bundle-Version>1.0.0</Bundle-Version>
 					</instructions>
 				</configuration>
 			</plugin>

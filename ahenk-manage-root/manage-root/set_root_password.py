@@ -32,10 +32,11 @@ class RootPassword(AbstractPlugin):
         self.context.set_mail_content(mail_content)
 
     def handle_task(self):
-        password = self.task['RootPassword'];
-        rootEntity = self.task['rootEntity'];
+        lockRootUser = self.task['lockRootUser']
+        password = self.task['RootPassword']
+        rootEntity = self.task['rootEntity']
 
-        self.logger.debug('[Root Pass] password:  ' + str("**********"));
+        self.logger.debug('[Root Pass] password:  ' + str("**********"))
 
         mail_send = False
         mail_subject = ''
@@ -48,23 +49,30 @@ class RootPassword(AbstractPlugin):
         if 'mailContent' in self.task:
             mail_content = self.task['mailContent'];
         try:
-
-            if str(password).strip() != '':
-                result_code, p_out, p_err = self.execute(self.create_shadow_password.format(password))
-                shadow_password = p_out.strip()
-                self.execute(self.change_password.format('\'{}\''.format(shadow_password), self.username))
-                self.set_mail(mail_content)
+            if lockRootUser:
+                self.logger.info("Locking root user")
+                result_code, p_out, p_err = self.execute("passwd -l root")
                 self.context.create_response(code=self.message_code.TASK_PROCESSED.value,
-                                             message='Parola Başarı ile değiştirildi.',
-                                             data=json.dumps({
-                                                 'Result': 'Parola Başarı ile değiştirildi.',
-                                                 'mail_content': str(self.context.get_mail_content()),
-                                                 'mail_subject': str(self.context.get_mail_subject()),
-                                                 'mail_send': self.context.is_mail_send(),
-                                                 'rootEntity': rootEntity
-                                             }),
-                                             content_type=ContentType.APPLICATION_JSON.value)
-                self.logger.debug('Changed password.')
+                                             message='Root kullanıcısı başarıyla kilitlendi.',
+                                             data=json.dumps({'Result': p_out}),
+                                             content_type=self.get_content_type().APPLICATION_JSON.value)
+            else:
+                if str(password).strip() != '':
+                    result_code, p_out, p_err = self.execute(self.create_shadow_password.format(password))
+                    shadow_password = p_out.strip()
+                    self.execute(self.change_password.format('\'{}\''.format(shadow_password), self.username))
+                    self.set_mail(mail_content)
+                    self.context.create_response(code=self.message_code.TASK_PROCESSED.value,
+                                                 message='Parola Başarı ile değiştirildi.',
+                                                 data=json.dumps({
+                                                     'Result': 'Parola Başarı ile değiştirildi.',
+                                                     'mail_content': str(self.context.get_mail_content()),
+                                                     'mail_subject': str(self.context.get_mail_subject()),
+                                                     'mail_send': self.context.is_mail_send(),
+                                                     'rootEntity': rootEntity
+                                                 }),
+                                                 content_type=ContentType.APPLICATION_JSON.value)
+                    self.logger.debug('Changed password.')
 
         except Exception as e:
             self.logger.error('Error: {0}'.format(str(e)))

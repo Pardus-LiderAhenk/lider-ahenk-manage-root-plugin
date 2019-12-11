@@ -110,7 +110,7 @@ public class ManageRootTaskDialog extends DefaultTaskDialog {
 				        .useUpper(true)
 				        .usePunctuation(true)
 				        .build();
-				textRootPassword.setText(passwordGenerator.generate(8));
+				textRootPassword.setText(passwordGenerator.generate(12));
 			}
 			
 			@Override
@@ -153,7 +153,7 @@ public class ManageRootTaskDialog extends DefaultTaskDialog {
 				throw new ValidationException(Messages.getString("FILL_FIELDS"));
 			}
 			else {
-				if(!textRootPassword.getText().toString().matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[+=.@*!])(?=\\S+$).{8,}$")) {
+				if(!textRootPassword.getText().toString().matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[+=.@*!])(?=\\S+$).{12,}$")) {
 					MessageDialog.openWarning(shell, Messages.getString("PASSWORD_VALIDATION_ERROR_HEADER"),Messages.getString("PASSWORD_RULE"));
 					throw new ValidationException(Messages.getString("PASSWORD_VALIDATION_ERROR_HEADER"));
 				}
